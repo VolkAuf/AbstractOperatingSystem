@@ -2,7 +2,7 @@ public class MemoryCell {
 
     private MemoryCell next;
     private int status;
-    private int index;
+    private final int index;
 
     public MemoryCell(int status, int index) {
         this.status = status;

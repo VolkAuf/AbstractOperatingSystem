@@ -4,9 +4,9 @@ public class Memory {
     private final int amountOfCells;
     private final MemoryCell[] MemoryCells;
 
-    public Memory(int sizeDisk, int sizeCell) {
+    public Memory(int sizeMemory, int sizeCell) {
         this.sizeCell = sizeCell;
-        amountOfCells = sizeDisk / sizeCell;
+        amountOfCells = sizeMemory / sizeCell;
         MemoryCells = new MemoryCell[amountOfCells];
         fillMemory();
     }
