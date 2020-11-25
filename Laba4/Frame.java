@@ -4,13 +4,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class Frame {
 
     private JFrame frame;
-    private JButton start;
-    private JButton createFile;
-    private JButton createFolder;
-    private JButton copyEntity;
-    private JButton pasteEntity;
-    private JButton moveEntity;
-    private JButton deleteEntity;
+    private JButton buttonStart;
+    private JButton buttonCreateFile;
+    private JButton buttonCreateFolder;
+    private JButton buttonCopyEntity;
+    private JButton buttonPasteEntity;
+    private JButton buttonMoveEntity;
+    private JButton buttonDeleteEntity;
     private Panel panelMemory;
     private JTextField fieldMemory;
     private JTextField fieldSector;
@@ -33,21 +33,21 @@ public class Frame {
         panelMemory = new Panel();
         panelMemory.setBounds(0, 130, 1510, 600);
         frame = new JFrame();
-        start = new JButton("Start");
-        start.setBounds(150, 20, 100, 95);
+        buttonStart = new JButton("Start");
+        buttonStart.setBounds(150, 20, 100, 95);
 
-        start.addActionListener(e -> {
-            createFile.setEnabled(true);
-            createFolder.setEnabled(true);
-            deleteEntity.setEnabled(true);
-            copyEntity.setEnabled(true);
-            pasteEntity.setEnabled(true);
-            moveEntity.setEnabled(true);
+        buttonStart.addActionListener(e -> {
+            buttonCreateFile.setEnabled(true);
+            buttonCreateFolder.setEnabled(true);
+            buttonDeleteEntity.setEnabled(true);
+            buttonCopyEntity.setEnabled(true);
+            buttonPasteEntity.setEnabled(true);
+            buttonMoveEntity.setEnabled(true);
             sizeMemory = Integer.parseInt(fieldMemory.getText());
             sizeSector = Integer.parseInt(fieldSector.getText());
             memory = new Memory(sizeMemory, sizeSector);
             fileManager = new FileManager(memory);
-            start.setEnabled(false);
+            buttonStart.setEnabled(false);
             fieldMemory.setEnabled(false);
             fieldSector.setEnabled(false);
             fieldFile.setEnabled(true);
@@ -69,9 +69,9 @@ public class Frame {
             frame.repaint();
         });
 
-        createFile = new JButton("Create File");
-        createFile.setBounds(260, 20, 120, 45);
-        createFile.addActionListener(e -> {
+        buttonCreateFile = new JButton("Create File");
+        buttonCreateFile.setBounds(260, 20, 120, 45);
+        buttonCreateFile.addActionListener(e -> {
             if (selectedNode != null) {
                 if (!selectedNode.getAllowsChildren()) {
                     JOptionPane.showMessageDialog(frame, "Cannot be added to file", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -91,9 +91,9 @@ public class Frame {
             }
         });
 
-        createFolder = new JButton("Create Folder");
-        createFolder.setBounds(260, 70, 120, 45);
-        createFolder.addActionListener(e -> {
+        buttonCreateFolder = new JButton("Create Folder");
+        buttonCreateFolder.setBounds(260, 70, 120, 45);
+        buttonCreateFolder.addActionListener(e -> {
             if (!selectedNode.getAllowsChildren()) {
                 JOptionPane.showMessageDialog(frame, "Cannot be added to file", "ERROR", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -109,23 +109,23 @@ public class Frame {
             }
         });
 
-        copyEntity = new JButton("Copy");
-        copyEntity.setBounds(390, 20, 120, 45);
-        copyEntity.addActionListener(e -> {
+        buttonCopyEntity = new JButton("Copy");
+        buttonCopyEntity.setBounds(390, 20, 120, 45);
+        buttonCopyEntity.addActionListener(e -> {
             copy(selectedNode);
             frame.repaint();
         });
 
-        pasteEntity = new JButton("Paste");
-        pasteEntity.setBounds(390, 70, 120, 45);
-        pasteEntity.addActionListener(e -> {
+        buttonPasteEntity = new JButton("Paste");
+        buttonPasteEntity.setBounds(390, 70, 120, 45);
+        buttonPasteEntity.addActionListener(e -> {
             paste(selectedNode);
             frame.repaint();
         });
 
-        moveEntity = new JButton("Move");
-        moveEntity.setBounds(520, 20, 120, 45);
-        moveEntity.addActionListener(e -> {
+        buttonMoveEntity = new JButton("Move");
+        buttonMoveEntity.setBounds(520, 20, 120, 45);
+        buttonMoveEntity.addActionListener(e -> {
             if (selectedNode != null && selectedNode.getParent() != null) {
                 DefaultMutableTreeNode buffer = selectedNode;
                 ((DefaultMutableTreeNode) selectedNode.getParent()).remove(selectedNode);
@@ -139,9 +139,9 @@ public class Frame {
             frame.repaint();
         });
 
-        deleteEntity = new JButton("Delete");
-        deleteEntity.setBounds(520, 70, 120, 45);
-        deleteEntity.addActionListener(e -> {
+        buttonDeleteEntity = new JButton("Delete");
+        buttonDeleteEntity.setBounds(520, 70, 120, 45);
+        buttonDeleteEntity.addActionListener(e -> {
             if (selectedNode != null && selectedNode.getParent() == null) {
                 JOptionPane.showMessageDialog(frame, "root cannot be removed", "ERROR", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -170,29 +170,29 @@ public class Frame {
         fieldName.setBounds(80, 95, 60, 20);
         fieldFile.setEnabled(false);
         fieldName.setEnabled(false);
-        createFile.setEnabled(false);
-        createFolder.setEnabled(false);
-        deleteEntity.setEnabled(false);
-        copyEntity.setEnabled(false);
-        pasteEntity.setEnabled(false);
-        moveEntity.setEnabled(false);
+        buttonCreateFile.setEnabled(false);
+        buttonCreateFolder.setEnabled(false);
+        buttonDeleteEntity.setEnabled(false);
+        buttonCopyEntity.setEnabled(false);
+        buttonPasteEntity.setEnabled(false);
+        buttonMoveEntity.setEnabled(false);
         frame.setBounds(0, 0, 1920, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
         frame.setVisible(true);
         frame.setResizable(false);
         frame.getContentPane().add(panelMemory);
-        frame.getContentPane().add(createFile);
-        frame.getContentPane().add(createFolder);
-        frame.getContentPane().add(deleteEntity);
-        frame.getContentPane().add(copyEntity);
-        frame.getContentPane().add(pasteEntity);
-        frame.getContentPane().add(moveEntity);
+        frame.getContentPane().add(buttonCreateFile);
+        frame.getContentPane().add(buttonCreateFolder);
+        frame.getContentPane().add(buttonDeleteEntity);
+        frame.getContentPane().add(buttonCopyEntity);
+        frame.getContentPane().add(buttonPasteEntity);
+        frame.getContentPane().add(buttonMoveEntity);
         frame.getContentPane().add(labelMemory);
         frame.getContentPane().add(fieldMemory);
         frame.getContentPane().add(fieldSector);
         frame.getContentPane().add(labelSector);
-        frame.getContentPane().add(start);
+        frame.getContentPane().add(buttonStart);
         frame.getContentPane().add(fieldFile);
         frame.getContentPane().add(labelFileSize);
         frame.getContentPane().add(fieldName);
