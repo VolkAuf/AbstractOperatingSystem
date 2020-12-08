@@ -10,7 +10,7 @@ public class FileManager {
     public FileManager(Memory memory) {
         this.memory = memory;
         listOfUnoccupied = new ListOfUnoccupied(memory);
-        root = new File("Root", 1, selectMemoryForRoot());
+        root = new File("Root", 1, true, selectMemoryForRoot());
     }
 
     public MemoryCell selectMemory(int size) {
@@ -27,14 +27,6 @@ public class FileManager {
             }
             MemoryCell temp = memory.getCells()[index];
             temp.setStatus(1);
-            /*
-            System.out.println();
-            temp.getIndex();
-            System.out.println(index);
-            System.out.println();
-            System.out.println(memory.getAmountOfCells());
-            System.out.println();
-            */
             listOfUnoccupied.deleteUselessCluster(index);
             if (prevMemoryCell != null) {
                 prevMemoryCell.setNextCell(temp);
@@ -58,7 +50,7 @@ public class FileManager {
         if (memoryCell == null) {
             return null;
         }
-        return new File(fileName, size, memoryCell);
+        return new File(fileName, size, false, memoryCell);
     }
 
     public File addFolder(String fileName) {
@@ -66,7 +58,7 @@ public class FileManager {
         if (memoryCell == null) {
             return null;
         }
-        return new File(fileName, 1, memoryCell);
+        return new File(fileName, 1, true, memoryCell);
     }
 
     public void deleteFile(File file) {

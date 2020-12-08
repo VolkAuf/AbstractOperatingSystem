@@ -5,7 +5,6 @@ public class ListOfUnoccupied {
     private final ArrayList<Boolean> clustersBool;
     Memory memory;
     private int size;
-    //использовать мапу
 
     public ListOfUnoccupied(Memory memory) {
         this.memory = memory;
