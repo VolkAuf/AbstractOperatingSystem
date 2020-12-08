@@ -105,50 +105,48 @@ public class InterfaceConsole {
     }
 
     private void selectFile() {
-        fileManager.removeSelecting();
-        Scanner in = new Scanner(System.in);
-        System.out.println("Выберите файл\n");
-        printfFileList();
-        int i = in.nextInt();
-        System.out.println();
-        if (i >= 0) {
-            fileSelected = arrFile.get(i);
-            select(fileSelected);
-            printf.printf();
+        try {
+            fileManager.removeSelecting();
+
+            Scanner in = new Scanner(System.in);
+            System.out.println("Выберите файл\n");
+            printfFileList();
+            int i = in.nextInt();
+            System.out.println();
+            if (i >= 0) {
+                fileSelected = arrFile.get(i);
+                select(fileSelected);
+                printf.printf();
+            }
+        } catch (Exception ex) {
+            System.out.println("\nНет такого файла!!!\n");
         }
     }
 
     private void createFile() {
-        selectFile();
-        if (fileSelected != null) {
-            if (fileSelected.isFolder()) {
-                Scanner in = new Scanner(System.in);
-                System.out.println("Введите имя файла\n");
-                String name = in.nextLine();
-                System.out.println();
+        try {
+            selectFile();
+            if (fileSelected != null) {
+                if (fileSelected.isFolder()) {
+                    Scanner in = new Scanner(System.in);
+                    System.out.println("Введите имя файла\n");
+                    String name = in.nextLine();
+                    System.out.println();
 
-                System.out.println("Введите размер файла\n");
-                int size = in.nextInt();
-                System.out.println();
+                    System.out.println("Введите размер файла\n");
+                    int size = in.nextInt();
+                    System.out.println();
 
-                File file = fileManager.addFile(name, size);
+                    File file = fileManager.addFile(name, size);
+                    File folder = fileSelected;
 
-                File folder = fileSelected;
-                File f = folder.getNext();
-                if (f != null) {
-                    if (file != null) {
-                        for (; f.getLeft() != null; f = f.getLeft()) {
-
-                        }
-                        f.setLeft(file);
-                        file.setRight(f);
-                        arrFile.add(file);
-                    }
-                } else {
-                    folder.setNext(file);
-                    file.setPrev(folder);
+                    folder.addChild(file);
+                    file.setParent(folder);
+                    arrFile.add(file);
                 }
             }
+        } catch (Exception ex) {
+            System.out.println("\nРазмер превысил допустимый\n");
         }
         printfFileList();
     }
@@ -163,21 +161,11 @@ public class InterfaceConsole {
                 System.out.println();
 
                 File file = fileManager.addFolder(name);
-
                 File folder = fileSelected;
-                File f = folder.getNext();
-                if (f != null) {
-                    if (file != null) {
-                        for (; f.getLeft() != null; f = f.getLeft()) {
-                        }
-                        f.setLeft(file);
-                        file.setRight(f);
-                        arrFile.add(file);
-                    }
-                } else {
-                    folder.setNext(file);
-                    file.setPrev(folder);
-                }
+
+                folder.addChild(file);
+                file.setParent(folder);
+                arrFile.add(file);
             }
         }
         printfFileList();
@@ -185,18 +173,9 @@ public class InterfaceConsole {
 
     private void copy() {
         selectFile();
+        fileManager.clearListCopiedFile();
         if (fileSelected != null) {
-            File f = fileSelected;
-            File temp = f;
-            fileBuffer = new File(f.getFileName(), f.getSize(), f.isFolder(), f.getCell());
-            if (f.getNext() != null) {
-                for (f = f.getNext(); f.getNext() != null; f = f.getNext()) {
-                    temp = new File(f.getFileName(), f.getSize(), f.isFolder(), f.getCell());
-                    temp.setPrev(fileBuffer);
-                    fileBuffer.setNext(temp);
-                    fileBuffer = temp;
-                }
-            }
+            fileBuffer = fileSelected;
         }
     }
 
@@ -205,11 +184,9 @@ public class InterfaceConsole {
             selectFile();
             if (fileSelected != null) {
                 if (fileSelected.isFolder()) {
-                    File f = fileSelected;
-                    for (; f.getNext() != null; f = f.getNext()) {
-                    }
-                    fileBuffer.setPrev(f);
-                    f.setNext(fileBuffer);
+                    fileManager.clearListCopiedFile();
+                    fileManager.addFile(fileBuffer, fileSelected);
+                    arrFile.addAll(fileManager.getListCopiedFile());
                 }
             }
         }
@@ -217,47 +194,41 @@ public class InterfaceConsole {
     }
 
     private void move() {
-        selectFile();
-        if (fileSelected != null) {
-            fileSelected.getPrev().setNext(null);
-            File temp = fileSelected;
-            selectFile();
-            if (fileSelected != null) {
-                File f = fileSelected;
-                for (; f.getNext() != null; f = f.getNext()) {
-                }
-                temp.setPrev(f);
-                f.setNext(temp);
-            }
-        }
+        copy();
+        paste();
+        deleteFile(fileBuffer);
+        File folder = fileBuffer.getParent();
+        folder.deleteChild(fileBuffer);
+        printfFileList();
     }
 
     private void delete() {
         selectFile();
-        if (fileSelected != null) {
-            fileBuffer = fileSelected;
-            fileSelected.getPrev().setNext(null);
-            fileManager.deleteFile(fileSelected);
-            for (; fileSelected.getNext() != null; fileSelected = fileSelected.getNext()) {
-                arrFile.remove(fileSelected);
-            }
+        if (fileSelected != null && fileSelected != fileRoot) {
+            deleteFile(fileSelected);
+            File folder = fileSelected.getParent();
+            folder.deleteChild(fileSelected);
         }
     }
 
-    private void select(File file) {
-        MemoryCell memoryCell = file.getCell();
-        if (memoryCell != null) {
-            fileManager.selectFile(memoryCell);
+    private void deleteFile(File file) {
+        if (file.isFolder()) {
+            for (File child : file.getChildren()) {
+                deleteFile(child);
+            }
         }
-        if (file.getNext() != null) {
-            if (file.isFolder()) {
-                file = file.getNext();
-                for (File f = file; f != null; f = f.getNext()) {
-                    memoryCell = f.getCell();
-                    if (memoryCell != null) {
-                        fileManager.selectFile(memoryCell);
-                    }
-                }
+        fileManager.deleteFile(file);
+        arrFile.remove(file);
+    }
+
+    private void select(File file) {
+        INode inode = file.getINode();
+        if (inode != null) {
+            fileManager.selectFile(inode);
+        }
+        if (file.isFolder()) {
+            for (File child : file.getChildren()) {
+                select(child);
             }
         }
     }

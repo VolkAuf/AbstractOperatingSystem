@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 public class FileManager {
@@ -6,6 +7,7 @@ public class FileManager {
     private final Memory memory;
     private final ListOfUnoccupied listOfUnoccupied;
     private final Random random = new Random();
+    private final ArrayList<File> listCopiedFile = new ArrayList<>();
 
     public FileManager(Memory memory) {
         this.memory = memory;
@@ -13,13 +15,12 @@ public class FileManager {
         root = new File("Root", 1, true, selectMemoryForRoot());
     }
 
-    public MemoryCell selectMemory(int size) {
-        int quantity = (size / memory.getSizeCell()) + 1;
+    public MemoryCell[] selectMemory(int size) {
+        int quantity = Math.max((size / memory.getSizeCell()), 1);
+        MemoryCell[] cells = new MemoryCell[quantity];
         if (quantity > listOfUnoccupied.getSize()) {
             return null;
         }
-        MemoryCell firstMemoryCell = null;
-        MemoryCell prevMemoryCell = null;
         for (int i = 0; i < quantity; i++) {
             int index = random.nextInt(memory.getAmountOfCells());
             while (!listOfUnoccupied.getBool(index)) {
@@ -28,14 +29,9 @@ public class FileManager {
             MemoryCell temp = memory.getCells()[index];
             temp.setStatus(1);
             listOfUnoccupied.deleteUselessCluster(index);
-            if (prevMemoryCell != null) {
-                prevMemoryCell.setNextCell(temp);
-            } else {
-                firstMemoryCell = temp;
-            }
-            prevMemoryCell = temp;
+            cells[i] = temp;
         }
-        return firstMemoryCell;
+        return cells;
     }
 
     public MemoryCell selectMemoryForRoot() {
@@ -46,15 +42,38 @@ public class FileManager {
     }
 
     public File addFile(String fileName, int size) {
-        MemoryCell memoryCell = selectMemory(size);
-        if (memoryCell == null) {
+        MemoryCell[] memoryCells = selectMemory(size);
+        if (memoryCells == null) {
             return null;
         }
-        return new File(fileName, size, false, memoryCell);
+        return new File(fileName, size, false, memoryCells);
+    }
+
+    public void addFile(File replica, File parent) {
+        MemoryCell[] memoryCell = selectMemory(replica.getSize());
+        if (memoryCell != null) {
+            File copy = new File(replica.getFileName() + "-copy", replica.getSize(), replica.isFolder(), memoryCell);
+            if (replica.isFolder()) {
+                for (File child : replica.getChildren()) {
+                    addFile(child, copy);
+                }
+            }
+            parent.addChild(copy);
+            copy.setParent(parent);
+            listCopiedFile.add(copy);
+        }
+    }
+
+    public ArrayList getListCopiedFile() {
+        return listCopiedFile;
+    }
+
+    public void clearListCopiedFile() {
+        listCopiedFile.clear();
     }
 
     public File addFolder(String fileName) {
-        MemoryCell memoryCell = selectMemory(1);
+        MemoryCell[] memoryCell = selectMemory(1);
         if (memoryCell == null) {
             return null;
         }
@@ -62,23 +81,25 @@ public class FileManager {
     }
 
     public void deleteFile(File file) {
-        MemoryCell prevMemoryCell = null;
-        MemoryCell memoryCell = file.getCell();
-        while (memoryCell != null) {
-            memoryCell.setStatus(0);
-            listOfUnoccupied.addCluster(memoryCell.getIndex());
-            if (prevMemoryCell != null) {
-                prevMemoryCell.setNextCell(null);
+        INode inode = file.getINode();
+        INode prev = inode;
+        for (; inode != null; inode = inode.getNext()) {
+            prev.setNext(null);
+            for (int i = 0; i < inode.getNodeCapacity(); i++) {
+                MemoryCell cell = inode.getCluster(i);
+                listOfUnoccupied.addCluster(cell.getIndex());
+                cell.setStatus(0);
             }
-            prevMemoryCell = memoryCell;
-            memoryCell = memoryCell.getNextCell();
+            prev = inode;
         }
     }
 
-    public void selectFile(MemoryCell memoryCell) {
-        while (memoryCell != null) {
-            memoryCell.setStatus(2);
-            memoryCell = memoryCell.getNextCell();
+    public void selectFile(INode inode) {
+        for (INode in = inode; in != null; in = in.getNext()) {
+            for (int i = 0; i < in.getNodeCapacity(); i++) {
+                MemoryCell cell = in.getCluster(i);
+                cell.setStatus(2);
+            }
         }
     }
 

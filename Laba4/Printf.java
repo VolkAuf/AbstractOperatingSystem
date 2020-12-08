@@ -1,4 +1,3 @@
-import java.awt.*;
 
 public class Printf {
     private Memory memory;

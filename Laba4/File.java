@@ -1,63 +1,61 @@
+import java.util.ArrayList;
+
 public class File {
 
     private final String fileName;
     private final int size;
-    private final MemoryCell memoryCell;
     private final boolean isFolder;
-    private File next;
-    private File prev;
-    private File left;
-    private File right;
+    private File parent;
+    private final ArrayList<File> children = new ArrayList();
+    private final INode iNode;
+
+
+    public File(String fileName, int size, boolean isFolder, MemoryCell[] memoryCell) {
+        this.fileName = fileName;
+        this.size = size;
+        this.isFolder = isFolder;
+        iNode = new INode();
+        iNode.setClusters(memoryCell);
+    }
 
     public File(String fileName, int size, boolean isFolder, MemoryCell memoryCell) {
         this.fileName = fileName;
         this.size = size;
         this.isFolder = isFolder;
-        this.memoryCell = memoryCell;
+        iNode = new INode();
+        iNode.setClusters(memoryCell);
     }
 
-    public File getLeft() {
-        return left;
+    public INode getINode() {
+        return iNode;
     }
 
-    public File getRight() {
-        return right;
+    public void addChild(File child) {
+        children.add(child);
     }
 
-    public void setRight(File right) {
-        this.right = right;
+    public ArrayList<File> getChildren() {
+        return children;
     }
 
-    public void setLeft(File left) {
-        this.left = left;
+    public File getParent() {
+        return parent;
     }
 
-    public File getNext() {
-        return next;
-    }
-
-    public void setNext(File next) {
-        this.next = next;
-    }
-
-    public File getPrev() {
-        return prev;
-    }
-
-    public void setPrev(File prev) {
-        this.prev = prev;
+    public void setParent(File parent) {
+        this.parent = parent;
     }
 
     public int getSize() {
         return size;
     }
 
-    public MemoryCell getCell() {
-        return memoryCell;
-    }
-
     public boolean isFolder() {
         return isFolder;
+    }
+
+    public void deleteChild(File file) {
+        children.remove(file);
     }
 
     public String getFileName() {
