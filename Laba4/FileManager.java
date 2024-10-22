@@ -27,7 +27,7 @@ public class FileManager {
                 index = random.nextInt(memory.getAmountOfCells());
             }
             MemoryCell temp = memory.getCells()[index];
-            temp.setStatus(1);
+            temp.setStatus(MemoryCell.MemoryCellStatus.Selected);
             listOfUnoccupied.deleteUselessCluster(index);
             cells[i] = temp;
         }
@@ -36,7 +36,7 @@ public class FileManager {
 
     public MemoryCell selectMemoryForRoot() {
         MemoryCell temp = memory.getCells()[0];
-        temp.setStatus(1);
+        temp.setStatus(MemoryCell.MemoryCellStatus.Selected);
         listOfUnoccupied.deleteUselessCluster(0);
         return temp;
     }
@@ -88,7 +88,7 @@ public class FileManager {
             for (int i = 0; i < inode.getNodeCapacity(); i++) {
                 MemoryCell cell = inode.getCluster(i);
                 listOfUnoccupied.addCluster(cell.getIndex());
-                cell.setStatus(0);
+                cell.setStatus(MemoryCell.MemoryCellStatus.None);
             }
             prev = inode;
         }
@@ -98,15 +98,15 @@ public class FileManager {
         for (INode in = inode; in != null; in = in.getNext()) {
             for (int i = 0; i < in.getNodeCapacity(); i++) {
                 MemoryCell cell = in.getCluster(i);
-                cell.setStatus(2);
+                cell.setStatus(MemoryCell.MemoryCellStatus.Selected);
             }
         }
     }
 
     public void removeSelecting() {
         for (int i = 0; i < memory.getCells().length; i++) {
-            if (memory.getCells()[i].getStatus() == 2) {
-                memory.getCells()[i].setStatus(1);
+            if (memory.getCells()[i].getStatus() == MemoryCell.MemoryCellStatus.Selected) {
+                memory.getCells()[i].setStatus(MemoryCell.MemoryCellStatus.Removed);
             }
         }
     }

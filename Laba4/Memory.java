@@ -13,7 +13,7 @@ public class Memory {
 
     public void fillMemory() {
         for (int i = 0; i < amountOfCells; i++) {
-            MemoryCells[i] = new MemoryCell(0, i);
+            MemoryCells[i] = new MemoryCell(MemoryCell.MemoryCellStatus.None, i);
         }
     }
 

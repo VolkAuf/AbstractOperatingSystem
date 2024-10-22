@@ -3,6 +3,37 @@ import java.util.Scanner;
 
 public class InterfaceConsole {
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
+    public static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
+    public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
+    public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+    public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
+    public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
+    public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
+    public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
+    public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+
+    private static final String INPUT_TEXT = """
+            Выберите операцию:
+            Create file - 1
+            Create folder - 2
+            Copy - 3
+            Paste - 4
+            Move - 5
+            Delete - 6
+            Select - 7
+            Exit - 0
+            """;
+
     int sizeMemory = 1024;
     int sizeSector = 8;
     Memory memory;
@@ -19,7 +50,6 @@ public class InterfaceConsole {
 
     public void Start() {
 
-        printf = new Printf();
         Scanner in = new Scanner(System.in);
 
         System.out.println("введите размер диска, изначально 1024\n");
@@ -35,63 +65,34 @@ public class InterfaceConsole {
         if (sizeSectorIn > 0) {
             sizeSector = sizeSectorIn;
         }
+
         memory = new Memory(sizeMemory, sizeSector);
         fileManager = new FileManager(memory);
-        printf.setMemory(memory);
+        printf = new Printf(memory);
 
         fileRoot = fileManager.getRoot();
         arrFile = new ArrayList<>();
         arrFile.add(fileRoot);
 
 
-        System.out.println("\nВыберите операцию" +
-                "\nCreate file - 1" +
-                "\nCreate folder - 2" +
-                "\nCopy - 3" +
-                "\nPaste - 4" +
-                "\nMove - 5" +
-                "\nDelete - 6" +
-                "\nSelect - 7" +
-                "\nExit - 0\n");
+        System.out.println(INPUT_TEXT);
 
-        int chose = in.nextInt();
+        int choice = in.nextInt();
         System.out.println();
-        while (chose != 0) {
-            switch (chose) {
-                case 1:
-                    createFile();
-                    break;
-                case 2:
-                    createFolder();
-                    break;
-                case 3:
-                    copy();
-                    break;
-                case 4:
-                    paste();
-                    break;
-                case 5:
-                    move();
-                    break;
-                case 6:
-                    delete();
-                    break;
-                case 7:
-                    selectFile();
-                    break;
-                default:
-                    break;
+        while (choice != 0) {
+            switch (choice) {
+                case 1 -> createFile();
+                case 2 -> createFolder();
+                case 3 -> copy();
+                case 4 -> paste();
+                case 5 -> move();
+                case 6 -> delete();
+                case 7 -> selectFile();
+                default -> {
+                }
             }
-            System.out.println("\nВыберите операцию" +
-                    "\nCreate file - 1" +
-                    "\nCreate folder - 2" +
-                    "\nCopy - 3" +
-                    "\nPaste - 4" +
-                    "\nMove - 5" +
-                    "\nDelete - 6" +
-                    "\nSelect - 7" +
-                    "\nExit - 0\n");
-            chose = in.nextInt();
+            System.out.println(INPUT_TEXT);
+            choice = in.nextInt();
             System.out.println();
         }
     }
@@ -101,7 +102,7 @@ public class InterfaceConsole {
         for (int i = 0; i < arrFile.size(); i++) {
             System.out.println(i + " " + arrFile.get(i).getFileName());
         }
-        System.out.println();
+        System.out.println("");
     }
 
     private void selectFile() {

@@ -11,7 +11,7 @@ public class ListOfUnoccupied {
         this.clustersBool = new ArrayList<>();
         this.size = memory.getCells().length;
         for (int i = 0; i < size; i++) {
-            if (memory.getCells()[i].getStatus() == 0) {
+            if (memory.getCells()[i].getStatus() == MemoryCell.MemoryCellStatus.None) {
                 clustersBool.add(i, true);
             }
         }

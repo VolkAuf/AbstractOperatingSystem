@@ -47,12 +47,12 @@ public class INode {
         this.next = next;
     }
 
-    public void setMemoryStatus(int status) {
+    public void setMemoryStatus(MemoryCell.MemoryCellStatus status) {
         for (INode in = this; in.next != null; in = in.next) {
             for (int i = 0; i < clusters.size(); i++) {
                 MemoryCell cell = clusters.get(i);
                 cell.setStatus(status);
-                if (status != 0) {
+                if (status != MemoryCell.MemoryCellStatus.None) {
                     clusters.add(cell);
                 }
             }

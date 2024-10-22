@@ -1,18 +1,24 @@
 public class MemoryCell {
 
-    private int status;
-    private final int index;
+    public enum MemoryCellStatus {
+        None,
+        Removed,
+        Selected,
+    }
 
-    public MemoryCell(int status, int index) {
+    private final int index;
+    private MemoryCellStatus status;
+
+    public MemoryCell(MemoryCellStatus status, int index) {
         this.status = status;
         this.index = index;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(MemoryCellStatus status) {
         this.status = status;
     }
 
-    public int getStatus() {
+    public MemoryCellStatus getStatus() {
         return status;
     }
 
