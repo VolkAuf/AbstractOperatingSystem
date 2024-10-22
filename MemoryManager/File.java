@@ -5,9 +5,9 @@ public class File {
     private final String fileName;
     private final int size;
     private final boolean isFolder;
-    private File parent;
-    private final ArrayList<File> children = new ArrayList();
+    private final ArrayList<File> children = new ArrayList<>();
     private final INode iNode;
+    private File parent;
 
 
     public File(String fileName, int size, boolean isFolder, MemoryCell[] memoryCell) {
@@ -58,9 +58,7 @@ public class File {
         children.remove(file);
     }
 
-    public String getFileName() {
-        return fileName;
-    }
+    public String getFileName() { return fileName; }
 
     public String toString() {
         return fileName;

@@ -22,6 +22,14 @@ public class MemoryCell {
         return status;
     }
 
+    public int getStatusInt(){
+        return switch (status) {
+            case None -> 0;
+            case Removed -> 1;
+            case Selected -> 2;
+        };
+    }
+
     public int getIndex() {
         return index;
     }

@@ -1,11 +1,10 @@
 import java.util.ArrayList;
 
 public class INode {
-    private INode next;
 
     private final int size = 64;
-
     private final ArrayList<MemoryCell> clusters;
+    private INode next;
 
     public INode() {
         clusters = new ArrayList<>(64);
@@ -17,9 +16,7 @@ public class INode {
     }
 
     public void setClusters(MemoryCell[] cells) {
-        INode curINode = this;
-        for (; curINode.next != null; curINode = curINode.next) {
-        }
+        INode curINode = getLast();
         for (MemoryCell cell : cells) {
             curINode.clusters.add(cell);
             if (curINode.size == clusters.size()) {
@@ -30,9 +27,7 @@ public class INode {
     }
 
     public void setClusters(MemoryCell cells) {
-        INode curINode = this;
-        for (; curINode.next != null; curINode = curINode.next) {
-        }
+        INode curINode = getLast();
         curINode.clusters.add(cells);
         if (curINode.size == clusters.size()) {
             curINode.next = new INode();
@@ -45,6 +40,13 @@ public class INode {
 
     public void setNext(INode next) {
         this.next = next;
+    }
+
+    public INode getLast(){
+        INode node = this;
+        while (node.next != null)
+            node = node.next;
+        return node;
     }
 
     public void setMemoryStatus(MemoryCell.MemoryCellStatus status) {

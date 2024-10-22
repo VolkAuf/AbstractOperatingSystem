@@ -64,7 +64,7 @@ public class FileManager {
         }
     }
 
-    public ArrayList getListCopiedFile() {
+    public ArrayList<File> getListCopiedFile() {
         return listCopiedFile;
     }
 
